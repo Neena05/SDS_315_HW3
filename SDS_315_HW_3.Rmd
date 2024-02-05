@@ -1,0 +1,133 @@
+---
+title: "SDS_315_HW_3"
+author: "Neena Varanasi"
+date: "2024-01-30"
+output: 
+  pdf_document
+---
+Name: Neena Varanasi
+
+EID: nv6558
+
+Github Link:
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE, echo=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(kableExtra)
+```
+
+## Problem 1
+```{r, message = FALSE, echo=FALSE}
+#import dataset
+creatinine <- read_csv("creatinine.csv")
+
+#create linear model
+model_kidney = lm(creatclear ~ age, data=creatinine)
+kidney_values <- coef(model_kidney)
+
+
+#extract variables and store linear equation
+slope <- kidney_values[2]
+intercept <- kidney_values[1]
+
+equation <- cat("y =", round(intercept, 2), "+", round(slope, 2), "* x")
+
+
+```
+A) The clearance rate for a 55-year old should be `r round(predict(model_kidney, newdata = data.frame(age = 55)),2)`. I determined this by creating a fitted model for the creatinine dataset and then using the predict function to determine the expected creatinine clearance rate for a 55-year-old. The fitted model reflects this equation: `r print(equation)`
+
+B) Creatine clearance rate decreases with age as the rate of change is of the graph is`r round((slope),2)` I determined this value by creating a fitted linear model for the creatinine dataset. Then, I stored the coefficients of the graph (slope and intercept) in a list and extracted the slope from the list.
+
+C) A 40-year-old with a rate of 135 is healthier as the 40-year-old's rate is higher than the average for their age by more than 10 mL/minute. The average clearance rate for a 40 year old is `r round(predict(model_kidney, newdata = data.frame(age = 40)),2)` Meanwhile, the 60-year-old's rate of 112 is  barely above the average rate for their age, which is `r round(predict(model_kidney, newdata = data.frame(age = 60)),2)`. The fitted model reflects this equation: `r print(equation)`
+
+## Problem 2
+```{r, message = FALSE, echo=FALSE}
+marketmodel <- read_csv("marketmodel.csv")
+
+#linearly regress the returns of the stocks- s&p is the x-axis,
+aapl <- lm(AAPL ~ SPY, data=marketmodel)
+goog <- lm(GOOG ~ SPY, data=marketmodel)
+mrk <- lm(MRK ~ SPY, data=marketmodel)
+jnj <- lm(JNJ ~ SPY, data=marketmodel)
+wmt <- lm(WMT ~ SPY, data=marketmodel)
+tgt <- lm(TGT ~ SPY, data=marketmodel)
+
+#extract the intercepts and slopes
+intercepts <- c(coef(aapl)[1], coef(goog)[1], coef(mrk)[1], coef(jnj)[1], coef(wmt)[1], coef(tgt)[1])
+
+slopes <-  c(coef(aapl)[2], coef(goog)[2], coef(mrk)[2], coef(jnj)[2], coef(wmt)[2], coef(tgt)[2])
+
+r_squared <- c(summary(aapl)$r.squared, summary(goog)$r.squared, summary(mrk)$r.squared, summary(jnj)$r.squared, summary(wmt)$r.squared, summary(tgt)$r.squared)
+
+#create a tibble
+stock_table <- data.frame(
+  TickerSymbol = c("AAPL", "GOOG", "MRK", "JNJ", "WMT", "TGT"),
+  Slopes = slopes,
+  Intercepts = intercepts,
+  R_Squared = r_squared)
+
+stock_table %>%
+  kbl(digits = 2, col.names = c("Ticker Symbol", "Slopes", "Intercepts", "R^2 Value"), booktabs = TRUE) %>%
+  kable_styling() %>% 
+  kable_styling(latex_options = c("hold_position"))
+
+```
+The table above demonstrates the regression of the returns for 6 individual stocks, Apple (APPL), Google(GOOG) Merck (MRK), Johnson and Johnson (JNJ), Wal-Mart (WMT), and Target (TGT) with respect to the S&P 500. The ticker symbol, slope, intercepts, and R^2 values are shown for each of the respective stocks starting 2019.
+
+The beta of a stock is a measure of the systematic risk of stocks that is represented similarly to percent change. A beta can have numerous values that correspond with different meanings. A beta of less than one means less systematic risk than the average firm. Meanwhile, a beta greater than one means the systematic risk is above average. This measure of risk means that when the market goes up, there is a greater return on the stock, but when the market goes down there are greater losses. A beta of 0 means no systematic risk, while a negative beta means that the return is less than the risk-free rate, similar to insurance. In the regression model above, the beta value with respect to the S&P 500 is represented by the slopes column. Therefore, Apple (AAPL) has an above-average risk, while Merck (MRK), Johnson and Johnson (JNJ), Wal-Mart (WMT), and Target (TGT) have below-average risks. An explanation for this below-average risk for Wal-Mart and Target could be that people buy necessities no matter the economic climate. Google (GOOG) represents the average firm with a systematic risk of 1.
+
+Therefore, the firm with the lowest systematic risk is Wal-Mart, and the firm with the highest systematic risk is Apple.
+
+## Problem 3
+```{r, message = FALSE, echo=FALSE}
+#import dataset
+covid <- read_csv("covid.csv")
+
+#subset of Italy data
+italy_covid <- filter(covid, country == "Italy")
+
+model_italy_covid <- lm(log(deaths) ~ days_since_first_death, data=italy_covid)
+italy_values <- coef(model_italy_covid)
+
+italy_growth_rate <- italy_values[2]
+italy_doubling_time <- (70 / (italy_growth_rate *100)) * 100
+
+#subset of Spain data
+spain_covid <- filter(covid, country == "Spain")
+
+model_spain_covid <- lm(log(deaths) ~ days_since_first_death, data=spain_covid)
+spain_values <- coef(model_spain_covid)
+
+spain_growth_rate <- spain_values[2]
+spain_doubling_time <- (70 / (spain_growth_rate *100)) * 100
+
+ggplot(covid,  aes(x=days_since_first_death, y=deaths, color = country)) +
+  geom_line() + 
+  ggtitle("Daily COVID-19 Deaths Over Time") +
+  xlab("Days Since First Death") +
+  ylab("Number of Deaths")
+
+```
+The growth rate for COVID-19 cases in Italy is `r round(italy_growth_rate,3)`. The doubling time for cases in Italy is `r round(italy_doubling_time)`.
+
+The growth rate for COVID-19 cases in Spain is `r round(spain_growth_rate,3)`. The doubling time for cases in Spain is `r round(spain_doubling_time)`.
+
+## Problem 4
+```{r, message = FALSE, echo=FALSE}
+#import dataset
+milk <- read_csv("milk.csv")
+
+#create linear model
+milk_model <- lm(log(sales) ~ log(price), data=milk)	
+milk_values <- coef(milk_model)
+
+#extract elasticity
+milk_price_elasticity <- milk_values[2]
+```
+The price elasticity of milk is `r round(milk_price_elasticity,2)`. In order to get this estimate, I used the power law as the relationship between sales and price is relatively proportional. Therefore, I fitted the model using the natural logarithm of each variable and extracted the coefficient on x, which represents the elasticity.
+
