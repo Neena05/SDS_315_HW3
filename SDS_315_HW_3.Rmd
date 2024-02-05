@@ -35,15 +35,12 @@ kidney_values <- coef(model_kidney)
 slope <- kidney_values[2]
 intercept <- kidney_values[1]
 
-equation <- cat("y =", round(intercept, 2), "+", round(slope, 2), "* x")
-
-
 ```
-A) The clearance rate for a 55-year old should be `r round(predict(model_kidney, newdata = data.frame(age = 55)),2)`. I determined this by creating a fitted model for the creatinine dataset and then using the predict function to determine the expected creatinine clearance rate for a 55-year-old. The fitted model reflects this equation: `r print(equation)`
+A) The clearance rate for a 55-year old should be `r round(predict(model_kidney, newdata = data.frame(age = 55)),2)`. I determined this by creating a fitted model for the creatinine dataset and then using the predict function to determine the expected creatinine clearance rate for a 55-year-old. The fitted model reflects this equation: `r paste("y =", round(intercept, 2), "+", round(slope, 2), "* x")`.
 
 B) Creatine clearance rate decreases with age as the rate of change is of the graph is`r round((slope),2)` I determined this value by creating a fitted linear model for the creatinine dataset. Then, I stored the coefficients of the graph (slope and intercept) in a list and extracted the slope from the list.
 
-C) A 40-year-old with a rate of 135 is healthier as the 40-year-old's rate is higher than the average for their age by more than 10 mL/minute. The average clearance rate for a 40 year old is `r round(predict(model_kidney, newdata = data.frame(age = 40)),2)` Meanwhile, the 60-year-old's rate of 112 is  barely above the average rate for their age, which is `r round(predict(model_kidney, newdata = data.frame(age = 60)),2)`. The fitted model reflects this equation: `r print(equation)`
+C) A 40-year-old with a rate of 135 is healthier as the 40-year-old's rate is higher than the average for their age by more than 10 mL/minute. The average clearance rate for a 40 year old is `r round(predict(model_kidney, newdata = data.frame(age = 40)),2)` Meanwhile, the 60-year-old's rate of 112 is  barely above the average rate for their age, which is `r round(predict(model_kidney, newdata = data.frame(age = 60)),2)`. The fitted model reflects this equation: `r paste("y =", round(intercept, 2), "+", round(slope, 2), "* x")`
 
 ## Problem 2
 ```{r, message = FALSE, echo=FALSE}
