@@ -92,7 +92,7 @@ model_italy_covid <- lm(log(deaths) ~ days_since_first_death, data=italy_covid)
 italy_values <- coef(model_italy_covid)
 
 italy_growth_rate <- italy_values[2]
-italy_doubling_time <- (70 / (italy_growth_rate *100)) * 100
+italy_doubling_time <- (70 / (italy_growth_rate *100))
 
 #subset of Spain data
 spain_covid <- filter(covid, country == "Spain")
@@ -101,7 +101,7 @@ model_spain_covid <- lm(log(deaths) ~ days_since_first_death, data=spain_covid)
 spain_values <- coef(model_spain_covid)
 
 spain_growth_rate <- spain_values[2]
-spain_doubling_time <- (70 / (spain_growth_rate *100)) * 100
+spain_doubling_time <- (70 / (spain_growth_rate *100))
 
 ggplot(covid,  aes(x=days_since_first_death, y=deaths, color = country)) +
   geom_line() + 
@@ -110,9 +110,9 @@ ggplot(covid,  aes(x=days_since_first_death, y=deaths, color = country)) +
   ylab("Number of Deaths")
 
 ```
-The growth rate for COVID-19 cases in Italy is `r round(italy_growth_rate,3)`. The doubling time for cases in Italy is `r round(italy_doubling_time)`.
+The growth rate for COVID-19 cases in Italy is `r round(italy_growth_rate,3)`. The doubling time for cases in Italy is `r round(italy_doubling_time)` days.
 
-The growth rate for COVID-19 cases in Spain is `r round(spain_growth_rate,3)`. The doubling time for cases in Spain is `r round(spain_doubling_time)`.
+The growth rate for COVID-19 cases in Spain is `r round(spain_growth_rate,3)`. The doubling time for cases in Spain is `r round(spain_doubling_time)` days.
 
 ## Problem 4
 ```{r, message = FALSE, echo=FALSE}
